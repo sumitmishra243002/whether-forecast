@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather Forecast</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #4facfe, #00f2fe);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    .weather-app {
+      text-align: center;
+      padding: 20px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      width: 90%;
+      max-width: 400px;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      width: 80%;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    .weather-info {
+      margin-top: 20px;
+    }
+
+    .weather-info p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="weather-app">
+    <h1>Weather Forecast</h1>
+    <input type="text" id="cityInput" placeholder="Enter city name">
+    <button onclick="getWeather()">Get Weather</button>
+    <div class="weather-info" id="weatherInfo"></div>
+  </div>
+
+  <script>
+    const apiKey = "bywXIPnQgUzfpvn8cR0nUTwjKTpM3qUy"; 
+
+    async function getWeather() {
+      const city = document.getElementById("cityInput").value;
+      const weatherInfo = document.getElementById("weatherInfo");
+
+      if (!city) {
+        weatherInfo.innerHTML = "<p>Please enter a city name.</p>";
+        return;
+      }
+
+      try {
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`
+        );
+
+        if (!response.ok) {
+          weatherInfo.innerHTML = "<p>City not found. Please try again.</p>";
+          return;
+        }
+
+        const data = await response.json();
+        const { main, weather, name } = data;
+        weatherInfo.innerHTML = `
+          <p><strong>City:</strong> ${name}</p>
+          <p><strong>Temperature:</strong> ${main.temp}°C</p>
+          <p><strong>Condition:</strong> ${weather[0].description}</p>
+          <p><strong>Humidity:</strong> ${main.humidity}%</p>
+        `;
+      } catch (error) {
+        weatherInfo.innerHTML = "<p>Failed to fetch weather data. Try again later.</p>";
+        console.error(error);
+      }
+    }
+  </script>
+</body>
+</html>
